@@ -300,6 +300,7 @@ module.exports = {
       watch: paths.appSrc,
       tsconfig: paths.appTsConfig,
       tslint: paths.appTsLint,
+      workers: ForkTsCheckerWebpackPlugin.TWO_CPUS_FREE
     }),
     // Lint css files with stylelint
     new StyleLintPlugin({
