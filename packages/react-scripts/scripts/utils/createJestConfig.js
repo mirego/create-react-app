@@ -10,6 +10,7 @@
 const fs = require('fs');
 const chalk = require('chalk');
 const paths = require('../../config/paths');
+const appPackage = require(paths.appPackageJson);
 
 module.exports = (resolve, rootDir, isEjecting) => {
   // Use this instead of `paths.testsSetup` to avoid putting
@@ -41,8 +42,11 @@ module.exports = (resolve, rootDir, isEjecting) => {
     transformIgnorePatterns: ['[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs|ts|tsx)$'],
     moduleNameMapper: {
       '^react-native$': 'react-native-web',
+      [`^${appPackage.name}[/](.+)`]: '<rootDir>/src/$1',
     },
     moduleFileExtensions: [
+      'ts',
+      'tsx',
       'web.js',
       'js',
       'json',
@@ -50,8 +54,6 @@ module.exports = (resolve, rootDir, isEjecting) => {
       'jsx',
       'node',
       'mjs',
-      'ts',
-      'tsx'
     ],
   };
   if (rootDir) {
@@ -95,5 +97,6 @@ module.exports = (resolve, rootDir, isEjecting) => {
       process.exit(1);
     }
   }
+
   return config;
 };
