@@ -14,11 +14,14 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const ManifestPlugin = require('webpack-manifest-plugin');
-const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
+const InterpolateHtmlPlugin = require('@mirego/react-dev-utils/InterpolateHtmlPlugin');
 const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
-const eslintFormatter = require('react-dev-utils/eslintFormatter');
-const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
+// const eslintFormatter = require('@mirego/react-dev-utils/eslintFormatter');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const ModuleScopePlugin = require('@mirego/react-dev-utils/ModuleScopePlugin');
+const StyleLintPlugin = require('stylelint-webpack-plugin');
 const paths = require('./paths');
+const appPackageJson = require(paths.appPackageJson);
 const getClientEnvironment = require('./env');
 
 // Webpack uses `publicPath` to determine where the app is being served from.
@@ -96,20 +99,22 @@ module.exports = {
     // https://github.com/facebookincubator/create-react-app/issues/290
     // `web` extension prefixes have been added for better support
     // for React Native Web.
-    extensions: ['.web.js', '.mjs', '.js', '.json', '.web.jsx', '.jsx'],
+    extensions: ['.web.js', '.mjs', '.js', '.json', '.web.jsx', '.jsx', '.ts', '.tsx'],
     alias: {
       // @remove-on-eject-begin
       // Resolve Babel runtime relative to react-scripts.
       // It usually still works on npm 3 without this but it would be
       // unfortunate to rely on, as react-scripts could be symlinked,
       // and thus babel-runtime might not be resolvable from the source.
-      'babel-runtime': path.dirname(
-        require.resolve('babel-runtime/package.json')
+      '@babel/runtime': path.dirname(
+        require.resolve('@babel/runtime/package.json')
       ),
       // @remove-on-eject-end
       // Support React Native Web
       // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
       'react-native': 'react-native-web',
+      // Use the package name as an alias for the src folder.
+      [appPackageJson.name]: paths.appSrc
     },
     plugins: [
       // Prevents users from importing files from outside of src/ (or node_modules/).
@@ -129,29 +134,29 @@ module.exports = {
 
       // First, run the linter.
       // It's important to do this before Babel processes the JS.
-      {
-        test: /\.(js|jsx|mjs)$/,
-        enforce: 'pre',
-        use: [
-          {
-            options: {
-              formatter: eslintFormatter,
-              eslintPath: require.resolve('eslint'),
-              // @remove-on-eject-begin
-              // TODO: consider separate config for production,
-              // e.g. to enable no-console and no-debugger only in production.
-              baseConfig: {
-                extends: [require.resolve('eslint-config-react-app')],
-              },
-              ignore: false,
-              useEslintrc: false,
-              // @remove-on-eject-end
-            },
-            loader: require.resolve('eslint-loader'),
-          },
-        ],
-        include: paths.appSrc,
-      },
+      // {
+      //   test: /\.(js|jsx|mjs)$/,
+      //   enforce: 'pre',
+      //   use: [
+      //     {
+      //       options: {
+      //         formatter: eslintFormatter,
+      //         eslintPath: require.resolve('eslint'),
+      //         // @remove-on-eject-begin
+      //         // TODO: consider separate config for production,
+      //         // e.g. to enable no-console and no-debugger only in production.
+      //         baseConfig: {
+      //           extends: [require.resolve('eslint-config-react-app')],
+      //         },
+      //         ignore: false,
+      //         useEslintrc: false,
+      //         // @remove-on-eject-end
+      //       },
+      //       loader: require.resolve('eslint-loader'),
+      //     },
+      //   ],
+      //   include: paths.appSrc,
+      // },
       {
         // "oneOf" will traverse all following loaders until one will
         // match the requirements. When no loader matches it will fall
@@ -169,13 +174,28 @@ module.exports = {
           },
           // Process JS with Babel.
           {
-            test: /\.(js|jsx|mjs)$/,
+            test: /\.(js|jsx|mjs|ts|tsx)$/,
             include: paths.appSrc,
             loader: require.resolve('babel-loader'),
             options: {
               // @remove-on-eject-begin
               babelrc: false,
-              presets: [require.resolve('babel-preset-react-app')],
+              presets: [
+                [require.resolve('@mirego/babel-preset-react-app'), {flow: false}],
+                require.resolve('@babel/preset-typescript')
+              ],
+              plugins: [
+                [
+                  require.resolve('babel-plugin-named-asset-import'),
+                  {
+                    loaderMap: {
+                      svg: {
+                        ReactComponent: 'svgr/webpack![path]',
+                      },
+                    },
+                  },
+                ],
+              ],
               // @remove-on-eject-end
               compact: true,
             },
@@ -239,6 +259,11 @@ module.exports = {
             ),
             // Note: this won't work without `new ExtractTextPlugin()` in `plugins`.
           },
+          // The GraphQL loader preprocesses GraphQL queries in .graphql files.
+          {
+            test: /\.(graphql|gql)$/,
+            loader: require.resolve('graphql-tag/loader'),
+          },
           // "file" loader makes sure assets end up in the `build` folder.
           // When you `import` an asset, you get its filename.
           // This loader doesn't use a "test" so it will catch all modules
@@ -249,7 +274,7 @@ module.exports = {
             // it's runtime that would otherwise processed through "file" loader.
             // Also exclude `html` and `json` extensions so they get processed
             // by webpacks internal loaders.
-            exclude: [/\.(js|jsx|mjs)$/, /\.html$/, /\.json$/],
+            exclude: [/\.(js|jsx|mjs|ts|tsx)$/, /\.html$/, /\.json$/],
             options: {
               name: 'static/media/[name].[hash:8].[ext]',
             },
@@ -356,6 +381,20 @@ module.exports = {
     // https://github.com/jmblog/how-to-optimize-momentjs-with-webpack
     // You can remove this if you don't use Moment.js:
     new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+    // Perform type checking and linting in a separate process to speed up compilation
+    new ForkTsCheckerWebpackPlugin({
+      async: false,
+      watch: paths.appSrc,
+      tsconfig: paths.appTsConfig,
+      tslint: paths.appTsLint,
+    }),
+    // Lint css files with stylelint
+    new StyleLintPlugin({
+      configFile: paths.appStyleLint,
+      context: paths.appSrc,
+      emitErrors: true,
+      files: '**/*.css'
+    }),
   ],
   // Some libraries import Node modules but don't use them in the browser.
   // Tell Webpack to provide empty mocks for them so importing them works.

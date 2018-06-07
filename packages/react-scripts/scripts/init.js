@@ -17,7 +17,7 @@ process.on('unhandledRejection', err => {
 const fs = require('fs-extra');
 const path = require('path');
 const chalk = require('chalk');
-const spawn = require('react-dev-utils/crossSpawn');
+const spawn = require('@mirego/react-dev-utils/crossSpawn');
 
 module.exports = function(
   appPath,
@@ -37,10 +37,11 @@ module.exports = function(
 
   // Setup the script rules
   appPackage.scripts = {
-    start: 'react-scripts start',
-    build: 'react-scripts build',
-    test: 'react-scripts test --env=jsdom',
-    eject: 'react-scripts eject',
+    start: 'mirego-react-scripts start',
+    build: 'mirego-react-scripts build',
+    test: 'mirego-react-scripts test --env=jsdom',
+    eject: 'mirego-react-scripts eject',
+    prettier: "prettier --single-quote --no-bracket-spacing --write './src/**/*.{js,ts,tsx,gql,graphql}'"
   };
 
   fs.writeFileSync(
@@ -68,6 +69,18 @@ module.exports = function(
     );
     return;
   }
+
+  // Add app name alias to tsconfig
+  const appTsconfig = require(path.join(appPath, 'tsconfig.json'));
+
+  appTsconfig.compilerOptions.paths = {
+    [`${appPackage.name}/*`]: ['./src/*']
+  };
+
+  fs.writeFileSync(
+    path.join(appPath, 'tsconfig.json'),
+    JSON.stringify(appTsconfig, null, 2)
+  );
 
   // Rename gitignore after the fact to prevent npm from renaming it to .npmignore
   // See: https://github.com/npm/npm/issues/1862
@@ -99,7 +112,32 @@ module.exports = function(
     command = 'npm';
     args = ['install', '--save', verbose && '--verbose'].filter(e => e);
   }
-  args.push('react', 'react-dom');
+
+  // Install dev dependencies
+  const types = [
+    '@types/node',
+    '@types/react',
+    '@types/react-dom',
+    '@types/jest',
+    'typescript',
+    'prettier',
+    'stylelint@8.4.0',
+    'stylelint-mirego',
+    'stylelint-order'
+  ];
+
+  console.log(
+    `Installing ${types.join(', ')} as dev dependencies ${command}...`
+  );
+  console.log();
+
+  const devProc = spawn.sync(command, args.concat('-D').concat(types), {
+    stdio: 'inherit',
+  });
+  if (devProc.status !== 0) {
+    console.error(`\`${command} ${args.concat(types).join(' ')}\` failed`);
+    return;
+  }
 
   // Install additional template dependencies, if present
   const templateDependenciesPath = path.join(
