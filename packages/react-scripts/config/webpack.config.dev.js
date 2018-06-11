@@ -188,6 +188,13 @@ module.exports = {
                     },
                   },
                 ],
+                [
+                  require.resolve('babel-plugin-emotion'),
+                  {
+                    sourceMap: true,
+                    autoLabel: true
+                  }
+                ],
               ],
               // @remove-on-eject-end
               // This is a feature of `babel-loader` for webpack (not Babel itself).
@@ -300,14 +307,13 @@ module.exports = {
       watch: paths.appSrc,
       tsconfig: paths.appTsConfig,
       tslint: paths.appTsLint,
-      workers: ForkTsCheckerWebpackPlugin.TWO_CPUS_FREE
     }),
     // Lint css files with stylelint
     new StyleLintPlugin({
       configFile: paths.appStyleLint,
       context: paths.appSrc,
       emitErrors: false,
-      files: '**/*.css'
+      files: '**/*.{css,ts,tsx,js,jsx}',
     }),
   ],
   // Some libraries import Node modules but don't use them in the browser.

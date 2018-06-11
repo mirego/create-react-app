@@ -123,7 +123,9 @@ module.exports = function(
     'prettier',
     'stylelint@8.4.0',
     'stylelint-mirego',
-    'stylelint-order'
+    'stylelint-order',
+    'stylelint-config-styled-components',
+    'stylelint-processor-styled-components'
   ];
 
   console.log(

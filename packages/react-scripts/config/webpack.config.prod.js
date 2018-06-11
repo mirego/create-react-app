@@ -195,6 +195,12 @@ module.exports = {
                     },
                   },
                 ],
+                [
+                  require.resolve('babel-plugin-emotion'),
+                  {
+                    hoist: true
+                  }
+                ],
               ],
               // @remove-on-eject-end
               compact: true,
@@ -394,7 +400,7 @@ module.exports = {
       configFile: paths.appStyleLint,
       context: paths.appSrc,
       emitErrors: true,
-      files: '**/*.css'
+      files: '**/*.{css,ts,tsx,js,jsx}'
     }),
   ],
   // Some libraries import Node modules but don't use them in the browser.

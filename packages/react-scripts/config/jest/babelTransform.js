@@ -12,7 +12,14 @@ const babelJest = require('babel-jest');
 module.exports = babelJest.createTransformer({
   presets: [
     [require.resolve('@mirego/babel-preset-react-app'), {flow: false}],
-    require.resolve('@babel/preset-typescript')
+    require.resolve('@babel/preset-typescript'),
+    [
+      require.resolve('babel-plugin-emotion'),
+      {
+        sourceMap: true,
+        autoLabel: true
+      }
+    ],
   ],
   babelrc: false,
 });
