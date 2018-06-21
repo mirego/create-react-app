@@ -13,6 +13,8 @@ module.exports = babelJest.createTransformer({
   presets: [
     [require.resolve('@mirego/babel-preset-react-app'), {flow: false}],
     require.resolve('@babel/preset-typescript'),
+  ],
+  plugins: [
     [
       require.resolve('babel-plugin-emotion'),
       {
