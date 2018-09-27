@@ -1,14 +1,14 @@
 {
-  "name": "react-scripts",
+  "name": "@mirego/react-scripts",
   "version": "2.0.1",
   "description": "Configuration and scripts for Create React App.",
-  "repository": "facebook/create-react-app",
+  "repository": "mirego/create-react-app",
   "license": "MIT",
   "engines": {
     "node": ">=6"
   },
   "bugs": {
-    "url": "https://github.com/facebook/create-react-app/issues"
+    "url": "https://github.com/mirego/create-react-app/issues"
   },
   "files": [
     "bin",
@@ -18,15 +18,17 @@
     "utils"
   ],
   "bin": {
-    "react-scripts": "./bin/react-scripts.js"
+    "mirego-react-scripts": "./bin/mirego-react-scripts.js"
   },
   "dependencies": {
     "@babel/core": "7.1.0",
+    "@babel/preset-typescript": "7.1.0",
     "@svgr/webpack": "2.4.1",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "9.0.0",
     "babel-jest": "23.6.0",
     "babel-loader": "8.0.4",
+    "babel-plugin-emotion": "9.2.10",
     "babel-plugin-named-asset-import": "^0.2.0",
     "babel-preset-react-app": "^5.0.0",
     "bfj": "6.1.1",
@@ -43,7 +45,9 @@
     "eslint-plugin-jsx-a11y": "6.1.1",
     "eslint-plugin-react": "7.11.1",
     "file-loader": "2.0.0",
+    "fork-ts-checker-webpack-plugin": "0.4.9",
     "fs-extra": "7.0.0",
+    "graphql-tag": "^2.9.2",
     "html-webpack-plugin": "4.0.0-alpha.2",
     "identity-obj-proxy": "3.0.0",
     "jest": "23.6.0",
@@ -61,16 +65,25 @@
     "resolve": "1.8.1",
     "sass-loader": "7.1.0",
     "style-loader": "0.23.0",
+    "stylelint": "8.4.0",
+    "stylelint-webpack-plugin": "0.10.5",
+    "sw-precache-webpack-plugin": "0.11.5",
     "terser-webpack-plugin": "1.1.0",
+    "tslint": "5.10.0",
+    "tslint-config-prettier": "1.13.0",
     "url-loader": "1.1.1",
     "webpack": "4.19.1",
     "webpack-dev-server": "3.1.9",
     "webpack-manifest-plugin": "2.0.4",
     "workbox-webpack-plugin": "3.6.2"
   },
+  "peerDependencies": {
+    "typescript": "3.x.x"
+  },
   "devDependencies": {
     "react": "^16.3.2",
-    "react-dom": "^16.3.2"
+    "react-dom": "^16.3.2",
+    "typescript": "^3.0.3"
   },
   "optionalDependencies": {
     "fsevents": "1.2.4"

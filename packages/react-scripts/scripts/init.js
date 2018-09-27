@@ -92,10 +92,9 @@ module.exports = function(
 
   // Setup the script rules
   appPackage.scripts = {
-    start: 'react-scripts start',
-    build: 'react-scripts build',
-    test: 'react-scripts test',
-    eject: 'react-scripts eject',
+    start: 'mirego-react-scripts start',
+    build: 'mirego-react-scripts build',
+    test: 'mirego-react-scripts test --env=jsdom',
   };
 
   // Setup the eslint config

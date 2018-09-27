@@ -22,6 +22,9 @@ const paths = require('./paths');
 const ManifestPlugin = require('webpack-manifest-plugin');
 const getCacheIdentifier = require('react-dev-utils/getCacheIdentifier');
 const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const StyleLintPlugin = require('stylelint-webpack-plugin');
+const appPackageJson = require(paths.appPackageJson);
 
 // Webpack uses `publicPath` to determine where the app is being served from.
 // In development, we always serve from the root. This makes config easier.
@@ -144,11 +147,13 @@ module.exports = {
     // https://github.com/facebook/create-react-app/issues/290
     // `web` extension prefixes have been added for better support
     // for React Native Web.
-    extensions: ['.web.js', '.js', '.json', '.web.jsx', '.jsx'],
+    extensions: ['.web.js', '.js', '.json', '.web.jsx', '.jsx', '.ts', '.tsx'],
     alias: {
       // Support React Native Web
       // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
       'react-native': 'react-native-web',
+      // Use the package name as an alias for the src folder.
+      [appPackageJson.name]: paths.appSrc
     },
     plugins: [
       // Adds support for installing with Plug'n'Play, leading to faster installs and adding
@@ -177,28 +182,28 @@ module.exports = {
 
       // First, run the linter.
       // It's important to do this before Babel processes the JS.
-      {
-        test: /\.(js|jsx)$/,
-        enforce: 'pre',
-        use: [
-          {
-            options: {
-              formatter: require.resolve('react-dev-utils/eslintFormatter'),
-              eslintPath: require.resolve('eslint'),
-              // @remove-on-eject-begin
-              baseConfig: {
-                extends: [require.resolve('eslint-config-react-app')],
-                settings: { react: { version: '999.999.999' } },
-              },
-              ignore: false,
-              useEslintrc: false,
-              // @remove-on-eject-end
-            },
-            loader: require.resolve('eslint-loader'),
-          },
-        ],
-        include: paths.appSrc,
-      },
+      // {
+      //   test: /\.(js|jsx)$/,
+      //   enforce: 'pre',
+      //   use: [
+      //     {
+      //       options: {
+      //         formatter: require.resolve('react-dev-utils/eslintFormatter'),
+      //         eslintPath: require.resolve('eslint'),
+      //         // @remove-on-eject-begin
+      //         baseConfig: {
+      //           extends: [require.resolve('eslint-config-react-app')],
+      //           settings: { react: { version: '999.999.999' } },
+      //         },
+      //         ignore: false,
+      //         useEslintrc: false,
+      //         // @remove-on-eject-end
+      //       },
+      //       loader: require.resolve('eslint-loader'),
+      //     },
+      //   ],
+      //   include: paths.appSrc,
+      // },
       {
         // `mjs` support is still in its infancy in the ecosystem, so we don't
         // support it.
@@ -228,7 +233,7 @@ module.exports = {
           // Process application JS with Babel.
           // The preset includes JSX, Flow, and some ESnext features.
           {
-            test: /\.(js|jsx)$/,
+            test: /\.(js|jsx|ts|tsx)$/,
             include: paths.appSrc,
             loader: require.resolve('babel-loader'),
             options: {
@@ -238,7 +243,10 @@ module.exports = {
               // @remove-on-eject-begin
               babelrc: false,
               configFile: false,
-              presets: [require.resolve('babel-preset-react-app')],
+              presets: [
+                [require.resolve('babel-preset-react-app'), {flow: false}],
+                require.resolve('@babel/preset-typescript')
+              ],
               // Make sure we have a unique cache identifier, erring on the
               // side of caution.
               // We remove this when the user ejects because the default
@@ -257,10 +265,18 @@ module.exports = {
                   {
                     loaderMap: {
                       svg: {
-                        ReactComponent: '@svgr/webpack?-prettier,-svgo![path]',
+                        ReactComponent:
+                          '@svgr/webpack?-prettier,-svgo![path]',
                       },
                     },
                   },
+                ],
+                [
+                  require.resolve('babel-plugin-emotion'),
+                  {
+                    sourceMap: true,
+                    autoLabel: true
+                  }
                 ],
               ],
               // This is a feature of `babel-loader` for webpack (not Babel itself).
@@ -351,6 +367,11 @@ module.exports = {
               'sass-loader'
             ),
           },
+          // The GraphQL loader preprocesses GraphQL queries in .graphql files.
+          {
+            test: /\.(graphql|gql)$/,
+            loader: require.resolve('graphql-tag/loader'),
+          },
           // "file" loader makes sure those assets get served by WebpackDevServer.
           // When you `import` an asset, you get its (virtual) filename.
           // In production, they would get copied to the `build` folder.
@@ -361,7 +382,7 @@ module.exports = {
             // its runtime that would otherwise be processed through "file" loader.
             // Also exclude `html` and `json` extensions so they get processed
             // by webpacks internal loaders.
-            exclude: [/\.(js|jsx)$/, /\.html$/, /\.json$/],
+            exclude: [/\.(js|jsx|ts|tsx)$/, /\.html$/, /\.json$/],
             loader: require.resolve('file-loader'),
             options: {
               name: 'static/media/[name].[hash:8].[ext]',
@@ -413,6 +434,27 @@ module.exports = {
     new ManifestPlugin({
       fileName: 'asset-manifest.json',
       publicPath: publicPath,
+    }),
+    // Perform type checking and linting in a separate process to speed up compilation
+    new ForkTsCheckerWebpackPlugin({
+      async: false,
+      watch: paths.appSrc,
+      tsconfig: paths.appTsConfig,
+      tslint: paths.appTsLint
+    }),
+    // Lint css files with stylelint
+    new StyleLintPlugin({
+      configFile: paths.appStyleLint,
+      context: paths.appSrc,
+      emitErrors: false,
+      files: '**/*.{css,scss,sass}',
+    }),
+    // Lint styled components with stylelint
+    new StyleLintPlugin({
+      configFile: paths.appStyleLintComponents,
+      context: paths.appSrc,
+      emitErrors: false,
+      files: '**/*.{ts,tsx,js,jsx}',
     }),
   ],
 

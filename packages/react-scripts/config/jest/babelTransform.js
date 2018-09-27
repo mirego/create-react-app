@@ -10,7 +10,17 @@
 const babelJest = require('babel-jest');
 
 module.exports = babelJest.createTransformer({
-  presets: [require.resolve('babel-preset-react-app')],
+  presets: [
+    [require.resolve('babel-preset-react-app'), {flow: false}],
+    require.resolve('@babel/preset-typescript'),
+    [
+      require.resolve('babel-plugin-emotion'),
+      {
+        sourceMap: true,
+        autoLabel: true
+      }
+    ],
+  ],
   babelrc: false,
   configFile: false,
 });
