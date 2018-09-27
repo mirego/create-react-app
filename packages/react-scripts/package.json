@@ -1,6 +1,6 @@
 {
   "name": "@mirego/react-scripts",
-  "version": "2.0.1",
+  "version": "2.0.0-beta.1",
   "description": "Configuration and scripts for Create React App.",
   "repository": "mirego/create-react-app",
   "license": "MIT",
