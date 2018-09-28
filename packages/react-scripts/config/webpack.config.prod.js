@@ -99,7 +99,16 @@ module.exports = {
     // https://github.com/facebookincubator/create-react-app/issues/290
     // `web` extension prefixes have been added for better support
     // for React Native Web.
-    extensions: ['.web.js', '.mjs', '.js', '.json', '.web.jsx', '.jsx', '.ts', '.tsx'],
+    extensions: [
+      '.web.js',
+      '.mjs',
+      '.js',
+      '.json',
+      '.web.jsx',
+      '.jsx',
+      '.ts',
+      '.tsx',
+    ],
     alias: {
       // @remove-on-eject-begin
       // Resolve Babel runtime relative to react-scripts.
@@ -114,7 +123,7 @@ module.exports = {
       // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
       'react-native': 'react-native-web',
       // Use the package name as an alias for the src folder.
-      [appPackageJson.name]: paths.appSrc
+      [appPackageJson.name]: paths.appSrc,
     },
     plugins: [
       // Prevents users from importing files from outside of src/ (or node_modules/).
@@ -181,8 +190,11 @@ module.exports = {
               // @remove-on-eject-begin
               babelrc: false,
               presets: [
-                [require.resolve('@mirego/babel-preset-react-app'), {flow: false}],
-                require.resolve('@babel/preset-typescript')
+                [
+                  require.resolve('@mirego/babel-preset-react-app'),
+                  { flow: false },
+                ],
+                require.resolve('@babel/preset-typescript'),
               ],
               plugins: [
                 [
@@ -198,8 +210,8 @@ module.exports = {
                 [
                   require.resolve('babel-plugin-emotion'),
                   {
-                    hoist: true
-                  }
+                    hoist: true,
+                  },
                 ],
               ],
               // @remove-on-eject-end
@@ -392,20 +404,20 @@ module.exports = {
       async: false,
       watch: paths.appSrc,
       tsconfig: paths.appTsConfig,
-      tslint: paths.appTsLint
+      tslint: paths.appTsLint,
     }),
     // Lint css files with stylelint
     new StyleLintPlugin({
       configFile: paths.appStyleLintComponents,
       context: paths.appSrc,
-      emitErrors: false,
+      emitErrors: true,
       files: '**/*.{ts,tsx,js,jsx}',
     }),
     // Lint css files with stylelint
     new StyleLintPlugin({
       configFile: paths.appStyleLint,
       context: paths.appSrc,
-      emitErrors: false,
+      emitErrors: true,
       files: '**/*.{css,scss}',
     }),
   ],
