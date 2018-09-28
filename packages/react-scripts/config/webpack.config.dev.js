@@ -310,10 +310,17 @@ module.exports = {
     }),
     // Lint css files with stylelint
     new StyleLintPlugin({
+      configFile: paths.appStyleLintComponents,
+      context: paths.appSrc,
+      emitErrors: false,
+      files: '**/*.{ts,tsx,js,jsx}',
+    }),
+    // Lint css files with stylelint
+    new StyleLintPlugin({
       configFile: paths.appStyleLint,
       context: paths.appSrc,
       emitErrors: false,
-      files: '**/*.{css,ts,tsx,js,jsx}',
+      files: '**/*.{css,scss}',
     }),
   ],
   // Some libraries import Node modules but don't use them in the browser.
