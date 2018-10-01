@@ -10,7 +10,6 @@
 const fs = require('fs');
 const chalk = require('chalk');
 const paths = require('../../config/paths');
-const appPackage = require(paths.appPackageJson);
 
 module.exports = (resolve, rootDir, isEjecting) => {
   // Use this instead of `paths.testsSetup` to avoid putting
@@ -38,7 +37,9 @@ module.exports = (resolve, rootDir, isEjecting) => {
         : resolve('config/jest/babelTransform.js'),
       '^.+\\.css$': resolve('config/jest/cssTransform.js'),
       '^.+\\.(graphql|gql)$': resolve('config/jest/graphqlTransform.js'),
-      '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': resolve('config/jest/fileTransform.js'),
+      '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': resolve(
+        'config/jest/fileTransform.js'
+      ),
     },
     transformIgnorePatterns: [
       '[/\\\\]node_modules[/\\\\].+\\.(js|jsx|ts|tsx)$',
@@ -47,9 +48,18 @@ module.exports = (resolve, rootDir, isEjecting) => {
     moduleNameMapper: {
       '^react-native$': 'react-native-web',
       '^.+\\.module\\.(css|sass|scss)$': 'identity-obj-proxy',
-      [`^${appPackage.name}[/](.+)`]: '<rootDir>/src/$1',
+      [`^${require(paths.appPackageJson).name}[/](.+)`]: '<rootDir>/src/$1',
     },
-    moduleFileExtensions: ['ts', 'tsx', 'web.js', 'js', 'json', 'web.jsx', 'jsx', 'node'],
+    moduleFileExtensions: [
+      'ts',
+      'tsx',
+      'web.js',
+      'js',
+      'json',
+      'web.jsx',
+      'jsx',
+      'node',
+    ],
   };
   if (rootDir) {
     config.rootDir = rootDir;

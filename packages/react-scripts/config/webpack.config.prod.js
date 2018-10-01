@@ -25,13 +25,10 @@ const getCSSModuleLocalIdent = require('react-dev-utils/getCSSModuleLocalIdent')
 const paths = require('./paths');
 const getClientEnvironment = require('./env');
 const getCacheIdentifier = require('react-dev-utils/getCacheIdentifier');
-<<<<<<< HEAD
 const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin');
-=======
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
 const appPackageJson = require(paths.appPackageJson);
->>>>>>> Add typescript, stylelint and emotion support
 
 // Webpack uses `publicPath` to determine where the app is being served from.
 // It requires a trailing slash, or the file assets will get an incorrect path.
@@ -220,7 +217,7 @@ module.exports = {
       // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
       'react-native': 'react-native-web',
       // Use the package name as an alias for the src folder.
-      [appPackageJson.name]: paths.appSrc
+      [appPackageJson.name]: paths.appSrc,
     },
     plugins: [
       // Adds support for installing with Plug'n'Play, leading to faster installs and adding
@@ -312,8 +309,8 @@ module.exports = {
               babelrc: false,
               configFile: false,
               presets: [
-                [require.resolve('babel-preset-react-app'), {flow: false}],
-                require.resolve('@babel/preset-typescript')
+                [require.resolve('babel-preset-react-app'), { flow: false }],
+                require.resolve('@babel/preset-typescript'),
               ],
               // Make sure we have a unique cache identifier, erring on the
               // side of caution.
@@ -333,8 +330,7 @@ module.exports = {
                   {
                     loaderMap: {
                       svg: {
-                        ReactComponent:
-                          '@svgr/webpack?-prettier,-svgo![path]',
+                        ReactComponent: '@svgr/webpack?-prettier,-svgo![path]',
                       },
                     },
                   },
@@ -342,8 +338,8 @@ module.exports = {
                 [
                   require.resolve('babel-plugin-emotion'),
                   {
-                    hoist: true
-                  }
+                    hoist: true,
+                  },
                 ],
               ],
               cacheDirectory: true,
@@ -550,7 +546,7 @@ module.exports = {
       async: false,
       watch: paths.appSrc,
       tsconfig: paths.appTsConfig,
-      tslint: paths.appTsLint
+      tslint: paths.appTsLint,
     }),
     // Lint css files with stylelint
     new StyleLintPlugin({
