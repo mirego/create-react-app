@@ -14,15 +14,6 @@ module.exports = babelJest.createTransformer({
     [require.resolve('babel-preset-react-app'), { flow: false }],
     require.resolve('@babel/preset-typescript'),
   ],
-  plugins: [
-    [
-      require.resolve('babel-plugin-emotion'),
-      {
-        sourceMap: true,
-        autoLabel: true,
-      },
-    ],
-  ],
   babelrc: false,
   configFile: false,
 });

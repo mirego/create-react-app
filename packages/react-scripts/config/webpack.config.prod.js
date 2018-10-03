@@ -335,12 +335,6 @@ module.exports = {
                     },
                   },
                 ],
-                [
-                  require.resolve('babel-plugin-emotion'),
-                  {
-                    hoist: true,
-                  },
-                ],
               ],
               cacheDirectory: true,
               // Save disk space when time isn't as important
@@ -445,11 +439,6 @@ module.exports = {
               },
               'sass-loader'
             ),
-          },
-          // The GraphQL loader preprocesses GraphQL queries in .graphql files.
-          {
-            test: /\.(graphql|gql)$/,
-            loader: require.resolve('graphql-tag/loader'),
           },
           // "file" loader makes sure assets end up in the `build` folder.
           // When you `import` an asset, you get its filename.

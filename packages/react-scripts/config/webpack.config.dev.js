@@ -152,8 +152,11 @@ module.exports = {
       // Support React Native Web
       // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
       'react-native': 'react-native-web',
+      // Alias emotion to use babel macros
+      emotion: 'emotion/macro',
+      'react-emotion': 'react-emotion/macro',
       // Use the package name as an alias for the src folder.
-      [appPackageJson.name]: paths.appSrc
+      [appPackageJson.name]: paths.appSrc,
     },
     plugins: [
       // Adds support for installing with Plug'n'Play, leading to faster installs and adding
@@ -244,8 +247,8 @@ module.exports = {
               babelrc: false,
               configFile: false,
               presets: [
-                [require.resolve('babel-preset-react-app'), {flow: false}],
-                require.resolve('@babel/preset-typescript')
+                [require.resolve('babel-preset-react-app'), { flow: false }],
+                require.resolve('@babel/preset-typescript'),
               ],
               // Make sure we have a unique cache identifier, erring on the
               // side of caution.
@@ -265,18 +268,10 @@ module.exports = {
                   {
                     loaderMap: {
                       svg: {
-                        ReactComponent:
-                          '@svgr/webpack?-prettier,-svgo![path]',
+                        ReactComponent: '@svgr/webpack?-prettier,-svgo![path]',
                       },
                     },
                   },
-                ],
-                [
-                  require.resolve('babel-plugin-emotion'),
-                  {
-                    sourceMap: true,
-                    autoLabel: true
-                  }
                 ],
               ],
               // This is a feature of `babel-loader` for webpack (not Babel itself).
@@ -367,11 +362,6 @@ module.exports = {
               'sass-loader'
             ),
           },
-          // The GraphQL loader preprocesses GraphQL queries in .graphql files.
-          {
-            test: /\.(graphql|gql)$/,
-            loader: require.resolve('graphql-tag/loader'),
-          },
           // "file" loader makes sure those assets get served by WebpackDevServer.
           // When you `import` an asset, you get its (virtual) filename.
           // In production, they would get copied to the `build` folder.
@@ -440,7 +430,7 @@ module.exports = {
       async: false,
       watch: paths.appSrc,
       tsconfig: paths.appTsConfig,
-      tslint: paths.appTsLint
+      tslint: paths.appTsLint,
     }),
     // Lint css files with stylelint
     new StyleLintPlugin({
