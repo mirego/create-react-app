@@ -232,6 +232,10 @@ module.exports = {
       // Support React Native Web
       // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
       'react-native': 'react-native-web',
+      // Alias babel macros
+      emotion: 'emotion/macro',
+      'react-emotion': 'react-emotion/macro',
+      'graphql-tag': 'graphql-tag.macro',
       // Use the package name as an alias for the src folder.
       [appPackageJson.name]: paths.appSrc,
     },
