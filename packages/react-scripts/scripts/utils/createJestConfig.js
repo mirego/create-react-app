@@ -14,14 +14,17 @@ const paths = require('../../config/paths');
 module.exports = (resolve, rootDir, isEjecting) => {
   // Use this instead of `paths.testsSetup` to avoid putting
   // an absolute filename into configuration after ejecting.
+  const setupTestsMatches = paths.testsSetup.match(/src\/setupTests\.(.+)/);
+  const setupTestsFileExtension =
+    (setupTestsMatches && setupTestsMatches[1]) || 'js';
   const setupTestsFile = fs.existsSync(paths.testsSetup)
-    ? '<rootDir>/src/setupTests.js'
+    ? `<rootDir>/src/setupTests.${setupTestsFileExtension}`
     : undefined;
 
   // TODO: I don't know if it's safe or not to just use / as path separator
   // in Jest configs. We need help from somebody with Windows to determine this.
   const config = {
-    collectCoverageFrom: ['src/**/*.{js,jsx,ts,tsx}'],
+    collectCoverageFrom: ['src/**/*.{js,jsx,ts,tsx}', '!src/**/*.d.ts'],
     // TODO: this breaks Yarn PnP on eject.
     // But we can't simply emit this because it'll be an absolute path.
     // The proper fix is to write jest.config.js on eject instead of a package.json key.
@@ -59,16 +62,9 @@ module.exports = (resolve, rootDir, isEjecting) => {
       '^.+\\.module\\.(css|sass|scss)$': 'identity-obj-proxy',
       [`^${require(paths.appPackageJson).name}[/](.+)`]: '<rootDir>/src/$1',
     },
-    moduleFileExtensions: [
-      'ts',
-      'tsx',
-      'web.js',
-      'js',
-      'json',
-      'web.jsx',
-      'jsx',
-      'node',
-    ],
+    moduleFileExtensions: [...paths.moduleFileExtensions, 'node'].filter(
+      ext => !ext.includes('mjs')
+    ),
   };
   if (rootDir) {
     config.rootDir = rootDir;
