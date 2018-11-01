@@ -16,6 +16,7 @@ const paths = require('../../config/paths');
 const os = require('os');
 const immer = require('react-dev-utils/immer').produce;
 const globby = require('react-dev-utils/globby').sync;
+const appPackageJson = require(paths.appPackageJson);
 
 function writeJson(fileName, object) {
   fs.writeFileSync(fileName, JSON.stringify(object, null, 2) + os.EOL);
@@ -89,19 +90,13 @@ function verifyTypeScriptSetup() {
     // These are suggested values and will be set when not present in the
     // tsconfig.json
     // 'parsedValue' matches the output value from ts.parseJsonConfigFileContent()
-    target: {
-      parsedValue: ts.ScriptTarget.ES5,
-      suggested: 'es5',
-    },
+    target: { parsedValue: ts.ScriptTarget.ES5, suggested: 'es5' },
     allowJs: { suggested: true },
     skipLibCheck: { suggested: true },
     esModuleInterop: { suggested: true },
     allowSyntheticDefaultImports: { suggested: true },
     strict: { suggested: true },
-    forceConsistentCasingInFileNames: { suggested: true },
-
-    // These values are required and cannot be changed by the user
-    // Keep this in sync with the webpack config
+    forceConsistentCasingInFileNames: { suggested: true }, // Keep this in sync with the webpack config // These values are required and cannot be changed by the user
     module: {
       parsedValue: ts.ModuleKind.ESNext,
       value: 'esnext',
@@ -120,13 +115,12 @@ function verifyTypeScriptSetup() {
       value: 'preserve',
       reason: 'JSX is compiled by Babel',
     },
-    // We do not support absolute imports, though this may come as a future
-    // enhancement
-    baseUrl: {
-      value: undefined,
-      reason: 'absolute imports are not supported (yet)',
+    baseUrl: { value: '.', reason: 'for appName alias' },
+    paths: {
+      value: { [appPackageJson.name + '/*']: ['./src/*'] },
+      parserValue: `{ [${appPackageJson.name + '/*'}]: ["./src/*"] }`,
+      reason: 'to alias appName',
     },
-    paths: { value: undefined, reason: 'aliased imports are not supported' },
   };
 
   const formatDiagnosticHost = {
