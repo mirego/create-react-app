@@ -92,7 +92,7 @@ function verifyTypeScriptSetup() {
     // 'parsedValue' matches the output value from ts.parseJsonConfigFileContent()
     target: { parsedValue: ts.ScriptTarget.ES5, suggested: 'es5' },
     allowJs: { suggested: true },
-    skipLibCheck: { suggested: true },
+    skipLibCheck: { suggested: false },
     esModuleInterop: { suggested: true },
     allowSyntheticDefaultImports: { suggested: true },
     strict: { suggested: true },
