@@ -97,7 +97,7 @@ module.exports = function(
   appPackage.scripts = {
     start: 'mirego-react-scripts start',
     build: 'mirego-react-scripts build',
-    test: 'mirego-react-scripts test --env=jsdom',
+    test: 'mirego-react-scripts test',
   };
 
   // Setup the eslint config

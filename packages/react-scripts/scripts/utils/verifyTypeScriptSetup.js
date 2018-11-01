@@ -90,13 +90,19 @@ function verifyTypeScriptSetup() {
     // These are suggested values and will be set when not present in the
     // tsconfig.json
     // 'parsedValue' matches the output value from ts.parseJsonConfigFileContent()
-    target: { parsedValue: ts.ScriptTarget.ES5, suggested: 'es5' },
+    target: {
+      parsedValue: ts.ScriptTarget.ES5,
+      suggested: 'es5',
+    },
     allowJs: { suggested: true },
     skipLibCheck: { suggested: false },
     esModuleInterop: { suggested: true },
     allowSyntheticDefaultImports: { suggested: true },
     strict: { suggested: true },
-    forceConsistentCasingInFileNames: { suggested: true }, // Keep this in sync with the webpack config // These values are required and cannot be changed by the user
+    forceConsistentCasingInFileNames: { suggested: true },
+
+    // These values are required and cannot be changed by the user
+    // Keep this in sync with the webpack config
     module: {
       parsedValue: ts.ModuleKind.ESNext,
       value: 'esnext',
@@ -115,10 +121,16 @@ function verifyTypeScriptSetup() {
       value: 'preserve',
       reason: 'JSX is compiled by Babel',
     },
-    baseUrl: { value: '.', reason: 'for appName alias' },
+    baseUrl: {
+      suggested: true,
+      value: '.',
+      reason: 'for appName alias',
+    },
     paths: {
-      value: { [appPackageJson.name + '/*']: ['./src/*'] },
-      parserValue: `{ [${appPackageJson.name + '/*'}]: ["./src/*"] }`,
+      suggested: true,
+      value: {
+        [`${appPackageJson.name}/*`]: ['./src/*'],
+      },
       reason: 'to alias appName',
     },
   };
