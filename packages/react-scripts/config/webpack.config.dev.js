@@ -23,7 +23,6 @@ const getClientEnvironment = require('./env');
 const paths = require('./paths');
 const ManifestPlugin = require('webpack-manifest-plugin');
 const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin');
-const StyleLintPlugin = require('stylelint-webpack-plugin');
 const appPackageJson = require(paths.appPackageJson);
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin-alt');
 const typescriptFormatter = require('react-dev-utils/typescriptFormatter');
@@ -189,31 +188,6 @@ module.exports = {
     rules: [
       // Disable require.ensure as it's not a standard language feature.
       { parser: { requireEnsure: false } },
-
-      // First, run the linter.
-      // It's important to do this before Babel processes the JS.
-      // {
-      //   test: /\.(js|mjs|jsx)$/,
-      //   enforce: 'pre',
-      //   use: [
-      //     {
-      //       options: {
-      //         formatter: require.resolve('react-dev-utils/eslintFormatter'),
-      //         eslintPath: require.resolve('eslint'),
-      //         // @remove-on-eject-begin
-      //         baseConfig: {
-      //           extends: [require.resolve('eslint-config-react-app')],
-      //           settings: { react: { version: '999.999.999' } },
-      //         },
-      //         ignore: false,
-      //         useEslintrc: false,
-      //         // @remove-on-eject-end
-      //       },
-      //       loader: require.resolve('eslint-loader'),
-      //     },
-      //   ],
-      //   include: paths.appSrc,
-      // },
       {
         // "oneOf" will traverse all following loaders until one will
         // match the requirements. When no loader matches it will fall
@@ -418,20 +392,6 @@ module.exports = {
     new ManifestPlugin({
       fileName: 'asset-manifest.json',
       publicPath: publicPath,
-    }),
-    // Lint css files with stylelint
-    new StyleLintPlugin({
-      configFile: paths.appStyleLint,
-      context: paths.appSrc,
-      emitErrors: false,
-      files: '**/*.{css,scss,sass}',
-    }),
-    // Lint styled components with stylelint
-    new StyleLintPlugin({
-      configFile: paths.appStyleLintComponents,
-      context: paths.appSrc,
-      emitErrors: false,
-      files: '**/*.{ts,tsx,js,jsx}',
     }),
     // TypeScript type checking
     useTypeScript &&
